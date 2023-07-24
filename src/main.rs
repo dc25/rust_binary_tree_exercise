@@ -1,3 +1,5 @@
+// originally: https://www.reddit.com/r/rust/comments/155l0n2/roast_my_binary_tree_please/
+
 type NodePtr = Option<Box<Node>>;
 
 struct Tree {
