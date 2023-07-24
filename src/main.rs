@@ -16,60 +16,11 @@ impl Node {
     }
 
     fn in_order_traversal(&self) {
-        in_order(self);
+        (*self.left).as_ref().map(|n| n.in_order_traversal());
+        println!("{:?}", self.value);
+        (*self.right).as_ref().map(|n| n.in_order_traversal());
     }
 
-    fn pre_order_traversal(&self) {
-        pre_order(self);
-    }
-
-    fn post_order_traversal(&self) {
-        post_order(self);
-    }
-
-    fn reverse_order_traversal(&self) {
-        reverse_order(self);
-    }
-}
-
-fn in_order(node: &Node) {
-    left_tree(node, in_order);
-    println!("{:?}", node.value);
-    right_tree(node, in_order);
-}
-
-fn reverse_order(node: &Node) {
-    right_tree(node, reverse_order);
-    println!("{:?}", node.value);
-    left_tree(node, reverse_order);
-}
-
-fn pre_order<'a>(node: &'a Node) {
-    println!("{:?}", node.value);
-    left_tree(node, pre_order);
-    right_tree(node, pre_order);
-}
-
-fn post_order<'a>(node: &'a Node) {
-    left_tree(node, post_order);
-    right_tree(node, post_order);
-    println!("{:?}", node.value);
-}
-
-fn left_tree(node: &Node, f: fn(node: &Node)) {
-    let left_node = node.left.as_ref();
-    match left_node {
-        Some(l) => f(l),
-        None => {}
-    }
-}
-
-fn right_tree(node: &Node, f: fn(node: &Node)) {
-    let right_node = node.right.as_ref();
-    match right_node {
-        Some(r) => f(r),
-        None => {}
-    }
 }
 
 fn insert(node: &mut Node, value: i32, mut height: i32) -> &mut Node {
@@ -129,9 +80,4 @@ fn main() {
 
     node.in_order_traversal();
     println!("\n");
-    node.pre_order_traversal();
-    println!("\n");
-    node.post_order_traversal();
-    println!("\n");
-    node.reverse_order_traversal();
 }
