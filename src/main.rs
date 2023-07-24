@@ -1,10 +1,12 @@
 use std::{cell::RefCell, rc::Rc};
 
+type NodePtr=Box<Option<Node>>;
+
 #[derive(Debug)]
 struct Node {
     value: i32,
-    left: Box<Option<Node>>,
-    right: Box<Option<Node>>,
+    left: NodePtr,
+    right: NodePtr,
 }
 
 impl Node {
