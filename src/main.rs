@@ -1,83 +1,93 @@
-use std::{cell::RefCell, rc::Rc};
-
-type NodePtr=Box<Option<Node>>;
-
-#[derive(Debug)]
-struct Node {
-    value: i32,
-    left: NodePtr,
-    right: NodePtr,
+struct Tree {
+    root: Option<Box<Node>>,
 }
 
-impl Node {
-    fn add(&mut self, value: i32) {
-        let mut height = 1;
-        insert(self, value, height);
+impl Tree {
+    fn new() -> Self {
+        Self{root: None} 
     }
 
     fn in_order_traversal(&self) {
-        (*self.left).as_ref().map(|n| n.in_order_traversal());
-        println!("{:?}", self.value);
-        (*self.right).as_ref().map(|n| n.in_order_traversal());
+        self.root.as_ref().map(|node_ptr| {
+            node_ptr.left.in_order_traversal();
+            println!("{:?}", node_ptr.value);
+            node_ptr.right.in_order_traversal();
+        });
+
+    }
+
+    fn pre_order_traversal(&self) {
+        self.root.as_ref().map(|node_ptr| {
+            println!("{:?}", node_ptr.value);
+            node_ptr.left.pre_order_traversal();
+            node_ptr.right.pre_order_traversal();
+        });
+    }
+
+    fn post_order_traversal(&self) {
+        self.root.as_ref().map(|node_ptr| {
+            node_ptr.left.post_order_traversal();
+            node_ptr.right.post_order_traversal();
+            println!("{:?}", node_ptr.value);
+        });
+    }
+
+    fn reverse_order_traversal(&self) {
+        self.root.as_ref().map(|node_ptr| {
+            node_ptr.right.reverse_order_traversal();
+            println!("{:?}", node_ptr.value);
+            node_ptr.left.reverse_order_traversal();
+        });
+    }
+
+    fn add(&mut self, value: i32) {
+        match self.root.take() {
+            None => {self.root = Some(Box::new(Node::new(value)));},
+            Some(mut node) => {
+                let sub_tree = if value < node.value {
+                    &mut node.left
+                } else {
+                    &mut node.right
+                };
+
+                sub_tree.add(value);
+                self.root = Some(node);
+            },
+        }
     }
 
 }
 
-fn insert(node: &mut Node, value: i32, mut height: i32) -> &mut Node {
-    height += 1;
-    println!("{}", height);
-    if value >= node.value {
-        if node.right.is_none() {
-            let right = node.right.insert(Node {
-                value: value,
-                left: Box::new(None),
-                right: Box::new(None),
-            });
-            right
-        } else {
-            let right = node.right.get_or_insert(Node {
-                value: 0,
-                left: Box::new(None),
-                right: Box::new(None),
-            });
-            insert(right, value, height)
-        }
-    } else {
-        if node.left.is_none() {
-            let left = node.left.insert(Node {
-                value: value,
-                left: Box::new(None),
-                right: Box::new(None),
-            });
-            left
-        } else {
-            let left = node.left.get_or_insert(Node {
-                value: 0,
-                left: Box::new(None),
-                right: Box::new(None),
-            });
-            insert(left, value, height)
-        }
+struct Node {
+    value: i32,
+    left: Tree,
+    right: Tree,
+}
+
+impl Node {
+    fn new(value: i32) -> Self {
+        Self{value, left: Tree{root:None}, right: Tree{root:None}}
     }
 }
+
 fn main() {
-    let node = Rc::new(RefCell::new(Node {
-        value: 10,
-        left: Box::new(None),
-        right: Box::new(None),
-    }));
-    {
-        node.borrow_mut().add(7);
+    let mut tree = Tree::new();
+    tree.add(10);
+    tree.add(7);
+    tree.add(6);
+    tree.add(8);
+    tree.add(11);
 
-        node.borrow_mut().add(6);
-
-        node.borrow_mut().add(8);
-
-        node.borrow_mut().add(11);
-    }
-
-    let node = node.borrow();
-
-    node.in_order_traversal();
+    tree.in_order_traversal();
     println!("\n");
+
+    tree.pre_order_traversal();
+    println!("\n");
+
+    tree.post_order_traversal();
+    println!("\n");
+
+    tree.reverse_order_traversal();
+    println!("\n");
+
 }
