@@ -40,22 +40,12 @@ impl Tree {
         });
     }
 
-    fn add(&mut self, value: i32) {
-        match self.root.take() {
-            None => {self.root = Some(Box::new(Node::new(value)));},
-            Some(mut node) => {
-                let sub_tree = if value < node.value {
-                    &mut node.left
-                } else {
-                    &mut node.right
-                };
-
-                sub_tree.add(value);
-                self.root = Some(node);
-            },
+    fn add(&mut self, v: i32) {
+        match self.root.as_mut() {
+            None => self.root = Some(Box::new(Node::new(v))),
+            Some(n) => if v < n.value { &mut n.left } else { &mut n.right }.add(v),
         }
     }
-
 }
 
 struct Node {
