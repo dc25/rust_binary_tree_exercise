@@ -1,4 +1,4 @@
-type NodePtr=Option<Box<Node>>;
+type NodePtr = Option<Box<Node>>;
 
 struct Tree {
     root: NodePtr,
@@ -6,7 +6,7 @@ struct Tree {
 
 impl Tree {
     fn new() -> Self {
-        Self{root: None} 
+        Self { root: None }
     }
 
     fn in_order_traversal(&self) {
@@ -44,7 +44,12 @@ impl Tree {
     fn add(&mut self, v: i32) {
         match self.root.as_mut() {
             None => self.root = Node::new(v),
-            Some(n) => if v < n.value { &mut n.left } else { &mut n.right }.add(v),
+            Some(n) => if v < n.value {
+                &mut n.left
+            } else {
+                &mut n.right
+            }
+            .add(v),
         }
     }
 }
@@ -57,7 +62,11 @@ struct Node {
 
 impl Node {
     fn new(value: i32) -> NodePtr {
-        Some(Box::new(Self{value, left: Tree::new(), right: Tree::new()}))
+        Some(Box::new(Self {
+            value,
+            left: Tree::new(),
+            right: Tree::new(),
+        }))
     }
 }
 
@@ -80,5 +89,4 @@ fn main() {
 
     tree.reverse_order_traversal();
     println!("\n");
-
 }
