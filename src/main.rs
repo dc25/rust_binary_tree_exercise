@@ -1,12 +1,14 @@
 // originally: https://www.reddit.com/r/rust/comments/155l0n2/roast_my_binary_tree_please/
+//
+use std::fmt::Debug;
 
-type NodePtr = Option<Box<Node>>;
+type NodePtr<T> = Option<Box<Node<T>>>;
 
-struct Tree {
-    root: NodePtr,
+struct Tree<T> {
+    root: NodePtr<T>,
 }
 
-impl Tree {
+impl<T: Debug + PartialOrd> Tree<T> {
     fn new() -> Self {
         Self { root: None }
     }
@@ -43,7 +45,7 @@ impl Tree {
         };
     }
 
-    fn add(&mut self, v: i32) {
+    fn add(&mut self, v: T) {
         match self.root.as_mut() {
             None => self.root = Node::new(v),
             Some(n) => if v < n.value {
@@ -56,14 +58,14 @@ impl Tree {
     }
 }
 
-struct Node {
-    value: i32,
-    left: Tree,
-    right: Tree,
+struct Node<T> {
+    value: T,
+    left: Tree<T>,
+    right: Tree<T>,
 }
 
-impl Node {
-    fn new(value: i32) -> NodePtr {
+impl<T:Debug + PartialOrd> Node<T> {
+    fn new(value: T) -> NodePtr<T> {
         Some(Box::new(Self {
             value,
             left: Tree::new(),
@@ -90,5 +92,24 @@ fn main() {
     println!("\n");
 
     tree.reverse_order_traversal();
+    println!("\n");
+
+    let mut strtree = Tree::new();
+    strtree.add("10".to_string());
+    strtree.add("7".to_string());
+    strtree.add("6".to_string());
+    strtree.add("8".to_string());
+    strtree.add("11".to_string());
+
+    strtree.in_order_traversal();
+    println!("\n");
+
+    strtree.pre_order_traversal();
+    println!("\n");
+
+    strtree.post_order_traversal();
+    println!("\n");
+
+    strtree.reverse_order_traversal();
     println!("\n");
 }
